@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Satya's Symphony of Shapes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <!-- SVG Colorblind Filters for Accessibility -->
+    <svg style="display: none">
+      <defs>
+        <filter id="protanopia-filter">
+          <feColorMatrix
+            type="matrix"
+            values="0.567, 0.433, 0, 0, 0
+                    0.558, 0.442, 0, 0, 0
+                    0, 0.242, 0.758, 0, 0
+                    0, 0, 0, 1, 0"
+          />
+        </filter>
+        <filter id="deuteranopia-filter">
+          <feColorMatrix
+            type="matrix"
+            values="0.625, 0.375, 0, 0, 0
+                    0.7, 0.3, 0, 0, 0
+                    0, 0.3, 0.7, 0, 0
+                    0, 0, 0, 1, 0"
+          />
+        </filter>
+        <filter id="tritanopia-filter">
+          <feColorMatrix
+            type="matrix"
+            values="0.95, 0.05, 0, 0, 0
+                    0, 0.433, 0.567, 0, 0
+                    0, 0.475, 0.525, 0, 0
+                    0, 0, 0, 1, 0"
+          />
+        </filter>
+      </defs>
+    </svg>
+
+    <div id="app">
+      <!-- Game Rendering Canvas -->
+      <canvas id="game-canvas"></canvas>
+
+      <!-- Glassmorphic UI Overlay -->
+      <div class="ui-overlay">
+        <!-- Top HUD -->
+        <header class="hud-top">
+          <!-- Score Badge -->
+          <div class="hud-badge">
+            <span class="hud-label">Score</span>
+            <span id="hud-score" class="hud-value">0</span>
+          </div>
+
+          <!-- Energy & Harmony Meter -->
+          <div class="hud-meters">
+            <div id="hud-energy-badge" class="energy-badge">
+              <span>⚡</span>
+              <span id="hud-energy-text">Energy Lv.1</span>
+            </div>
+            <div class="meter-track">
+              <div id="hud-harmony-fill" class="meter-fill" style="width: 50%"></div>
+            </div>
+            <span id="hud-harmony-label" style="font-size: 10px; color: var(--accent-gold); font-weight: 700;">
+              Harmony 50%
+            </span>
+          </div>
+
+          <!-- High Score / Timer Badge -->
+          <div class="hud-badge">
+            <span id="hud-secondary-label" class="hud-label">Best</span>
+            <span id="hud-secondary-value" class="hud-value">0</span>
+          </div>
+        </header>
+
+        <!-- Crucible Shape Fusion Floating Trigger -->
+        <button id="btn-crucible" class="crucible-btn interactive" title="Harmonic Crucible (Shape Fusion)">
+          <span>🔮</span>
+          <span class="crucible-label">FUSION</span>
+        </button>
+
+        <!-- Bottom Controls HUD -->
+        <footer class="hud-bottom interactive">
+          <button id="btn-open-modes" class="btn-glass" title="Game Modes">
+            <span>🎮</span>
+            <span id="label-active-mode">Classic</span>
+          </button>
+          <button id="btn-open-journey" class="btn-glass btn-icon" title="Journey Map">🗺️</button>
+          <button id="btn-open-shop" class="btn-glass btn-icon" title="Harmonic Shop">💎</button>
+          <button id="btn-open-achievements" class="btn-glass btn-icon" title="Achievements">🏆</button>
+          <button id="btn-open-quests" class="btn-glass btn-icon" title="Quests">🎯</button>
+          <button id="btn-open-leaderboard" class="btn-glass btn-icon" title="Leaderboards">📊</button>
+          <button id="btn-open-profile" class="btn-glass btn-icon" title="Profile & Stats">👤</button>
+          <button id="btn-open-settings" class="btn-glass btn-icon" title="Settings">⚙️</button>
+        </footer>
+      </div>
+
+      <!-- ================= MODALS ================= -->
+
+      <!-- Game Modes Modal -->
+      <div id="modal-modes" class="modal-backdrop">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h2 class="modal-title">Game Modes</h2>
+            <button class="btn-glass btn-icon modal-close">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="mode-card" data-mode="classic">
+              <div class="mode-icon">♾️</div>
+              <div class="mode-info">
+                <div class="mode-title">Classic Mode</div>
+                <div class="mode-desc">Endless tactical puzzle solving. Chase highest scores and master line clears.</div>
+              </div>
+            </div>
+            <div class="mode-card" data-mode="journey">
+              <div class="mode-icon">🗺️</div>
+              <div class="mode-info">
+                <div class="mode-title">Journey Mode</div>
+                <div class="mode-desc">Handcrafted campaign stages with unique objectives and 3-star ratings.</div>
+              </div>
+            </div>
+            <div class="mode-card" data-mode="zen">
+              <div class="mode-icon">🧘</div>
+              <div class="mode-info">
+                <div class="mode-title">Zen Mode</div>
+                <div class="mode-desc">Stress-free relaxing play with no game over. Harmonic relief waves clear blocks.</div>
+              </div>
+            </div>
+            <div class="mode-card" data-mode="rush">
+              <div class="mode-icon">⚡</div>
+              <div class="mode-info">
+                <div class="mode-title">Rush Mode (120s)</div>
+                <div class="mode-desc">High-tempo speed trial. Line clears add bonus time to the clock.</div>
+              </div>
+            </div>
+            <div class="mode-card" data-mode="daily">
+              <div class="mode-icon">☀️</div>
+              <div class="mode-info">
+                <div class="mode-title">Daily Challenge</div>
+                <div class="mode-desc">Global date-seeded puzzle. Compete with identical piece sequences daily.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Journey Stage Select Modal -->
+      <div id="modal-journey" class="modal-backdrop">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h2 class="modal-title">Journey Stages</h2>
+            <button class="btn-glass btn-icon modal-close">✕</button>
+          </div>
+          <div id="journey-stages-container" class="modal-body">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Shop & Cosmetics Modal -->
+      <div id="modal-shop" class="modal-backdrop">
+        <div class="modal-card">
+          <div class="modal-header">
+            <div>
+              <h2 class="modal-title">Harmonic Shop</h2>
+              <div style="font-size: 13px; color: var(--accent-cyan); font-weight: 700; margin-top: 2px;">
+                💎 <span id="shop-shards-balance">0</span> Shards
+              </div>
+            </div>
+            <button class="btn-glass btn-icon modal-close">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="tab-row">
+              <button class="tab-btn active" data-shop-tab="theme">Themes</button>
+              <button class="tab-btn" data-shop-tab="sound">Sound Packs</button>
+              <button class="tab-btn" data-shop-tab="particles">Particles</button>
+            </div>
+            <div id="shop-items-container" class="card-grid">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Achievements Modal -->
+      <div id="modal-achievements" class="modal-backdrop">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h2 class="modal-title">Achievements</h2>
+            <button class="btn-glass btn-icon modal-close">✕</button>
+          </div>
+          <div id="achievements-container" class="modal-body">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Quests Modal -->
+      <div id="modal-quests" class="modal-backdrop">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h2 class="modal-title">Active Quests</h2>
+            <button class="btn-glass btn-icon modal-close">✕</button>
+          </div>
+          <div id="quests-container" class="modal-body">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboards Modal -->
+      <div id="modal-leaderboard" class="modal-backdrop">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h2 class="modal-title">Leaderboards</h2>
+            <button class="btn-glass btn-icon modal-close">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="tab-row">
+              <button class="tab-btn active" data-lb-tab="global">Global</button>
+              <button class="tab-btn" data-lb-tab="regional">Regional</button>
+              <button class="tab-btn" data-lb-tab="friends">Friends</button>
+            </div>
+            <div id="leaderboard-container" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile & Deep Stats Modal -->
+      <div id="modal-profile" class="modal-backdrop">
+        <div class="modal-card">
+          <div class="modal-header">
+            <div>
+              <h2 class="modal-title">Player Profile</h2>
+              <div id="profile-rank-title" style="font-size: 13px; color: var(--accent-purple); font-weight: 700;">
+                Novice Harmonizer
+              </div>
+            </div>
+            <button class="btn-glass btn-icon modal-close">✕</button>
+          </div>
+          <div id="profile-stats-container" class="modal-body">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Modal -->
+      <div id="modal-settings" class="modal-backdrop">
+        <div class="modal-card">
+          <div class="modal-header">
+            <h2 class="modal-title">Audio & Settings</h2>
+            <button class="btn-glass btn-icon modal-close">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="setting-row">
+              <label for="setting-master-vol">Master Volume</label>
+              <input id="setting-master-vol" class="setting-slider" type="range" min="0" max="1" step="0.05" value="0.8" />
+            </div>
+            <div class="setting-row">
+              <label for="setting-sfx-vol">Sound Effects (SFX)</label>
+              <input id="setting-sfx-vol" class="setting-slider" type="range" min="0" max="1" step="0.05" value="0.8" />
+            </div>
+            <div class="setting-row">
+              <label for="setting-bgm-vol">Ambient Symphony</label>
+              <input id="setting-bgm-vol" class="setting-slider" type="range" min="0" max="1" step="0.05" value="0.5" />
+            </div>
+            <div class="setting-row">
+              <label for="setting-screenshake">Screen Shake</label>
+              <input id="setting-screenshake" type="checkbox" checked />
+            </div>
+            <div class="setting-row">
+              <label for="setting-reduced-motion">Reduced Motion</label>
+              <input id="setting-reduced-motion" type="checkbox" />
+            </div>
+            <div class="setting-row">
+              <label for="setting-colorblind">Colorblind Mode</label>
+              <select id="setting-colorblind" class="btn-glass" style="padding: 4px 8px;">
+                <option value="none">Default</option>
+                <option value="protanopia">Protanopia</option>
+                <option value="deuteranopia">Deuteranopia</option>
+                <option value="tritanopia">Tritanopia</option>
+                <option value="high_contrast">High Contrast</option>
+              </select>
+            </div>
+            <div class="setting-row">
+              <label for="setting-touch-offset">Touch Finger Offset</label>
+              <input id="setting-touch-offset" class="setting-slider" type="range" min="0" max="120" step="5" value="70" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Over / Victory Modal -->
+      <div id="modal-gameover" class="modal-backdrop">
+        <div class="modal-card" style="text-align: center; align-items: center;">
+          <div class="modal-header" style="width: 100%;">
+            <h2 id="gameover-title" class="modal-title" style="margin: 0 auto;">Symphony Concluded</h2>
+          </div>
+          <div class="modal-body" style="align-items: center; width: 100%;">
+            <div id="gameover-stars" style="font-size: 32px; letter-spacing: 4px; color: #facc15; display: none;">
+              ★★★
+            </div>
+            <div style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">Final Score</div>
+            <div id="gameover-final-score" style="font-size: 40px; font-weight: 900; color: #38bdf8;">
+              0
+            </div>
+            <div id="gameover-rewards" style="display: flex; gap: 16px; margin: 12px 0;">
+              <div class="hud-badge" style="padding: 6px 14px;">
+                <span class="hud-label">Shards</span>
+                <span id="gameover-shards" style="color: #38bdf8; font-weight: 800;">+0</span>
+              </div>
+              <div class="hud-badge" style="padding: 6px 14px;">
+                <span class="hud-label">XP Gained</span>
+                <span id="gameover-xp" style="color: #c084fc; font-weight: 800;">+0</span>
+              </div>
+            </div>
+            <button id="btn-gameover-restart" class="btn-glass" style="padding: 12px 28px; font-size: 16px; background: linear-gradient(135deg, #0284c7, #38bdf8);">
+              Play Again
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Script Entrypoint -->
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
